@@ -12,7 +12,7 @@ Dự án đã được chấp nhận & trình bày tại Hội nghị Khoa học
 
 Phần cứng sử dụng
 
-Raspberry Pi (3B/Zero 2W/4)
+Raspberry Pi 3 Model B+
 
 Microphone USB (thu âm giọng nói)
 
