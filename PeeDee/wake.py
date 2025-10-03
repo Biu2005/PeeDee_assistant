@@ -15,6 +15,7 @@ def listen_for_wake_word():
         while True:
             try:
                 print("Lắng nghe...")
+                expression.display_text("Lắng Nghe ...")
                # ttspeak.text_to_speak("tôi đang lắng nghe")
                 audio = recognizer.listen(source)
 

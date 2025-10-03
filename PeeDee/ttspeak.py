@@ -1,9 +1,10 @@
 from gtts import gTTS
 import pygame
 import os
+import expression
 def text_to_speak(text):
     tts = gTTS(text=text, lang='vi')
-    file_path = "sound.mp3"
+    file_path = "/home/peedee/PeeDee/sound.mp3"
     tts.save(file_path)
 
     # Sử dụng pygame để phát âm thanh
@@ -14,7 +15,6 @@ def text_to_speak(text):
     # Đợi cho đến khi phát xong
     while pygame.mixer.music.get_busy():
         continue
-    
     # Xóa tệp sau khi phát
     pygame.mixer.music.unload()
     os.remove(file_path)

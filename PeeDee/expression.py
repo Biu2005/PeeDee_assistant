@@ -3,6 +3,7 @@ import sys
 from luma.core.interface.serial import i2c
 from luma.oled.device import sh1106
 from luma.core.render import canvas
+from PIL import ImageFont
 
 # Constants for the display
 SCREEN_WIDTH = 128
@@ -27,6 +28,11 @@ right_eye_width = ref_eye_width
 # Setup the OLED display
 serial = i2c(port=1, address=0x3C)  # Adjust the port if necessary
 device = sh1106(serial)
+try:
+	font = ImageFont.truetype("/usr/share/fonts/truetype/dejavu/DejaVuSans.ttf",15)
+except IOError:
+	print("Not found")
+	font = Image.load.default()
 
 def draw_eyes(update=True):
     valid_left_eye_height = max(left_eye_height, 0)
@@ -152,6 +158,51 @@ def move_big_eye(direction):
             left_eye_width = max(left_eye_width - 1, 0)  # Ngăn không cho giá trị âm
         draw_eyes()
         time.sleep(0.01)
+
+def display_text(text, duration_seconds=0):
+    # --- PHẦN LOGIC XUỐNG DÒNG ---
+    words = text.split(' ')
+    lines = []
+    current_line = ''
+    
+    # Chiều cao của mỗi dòng chữ, bạn có thể chỉnh số này để tăng/giảm khoảng cách dòng
+    line_height = 20 # Dựa trên kích thước font là 20
+
+    # Dùng canvas tạm để đo chiều rộng text mà không cần vẽ ra màn hình
+    with canvas(device) as draw:
+        for word in words:
+            # Kiểm tra xem nếu thêm từ mới vào, dòng hiện tại có bị quá dài không
+            test_line = f'{current_line} {word}'.strip()
+            if draw.textlength(test_line, font=font) <= SCREEN_WIDTH:
+                current_line = test_line
+            else:
+                # Nếu dòng quá dài, lưu dòng hiện tại lại
+                lines.append(current_line)
+                # Và bắt đầu một dòng mới với từ vừa kiểm tra
+                current_line = word
+        
+        # Đừng quên lưu lại dòng cuối cùng
+        lines.append(current_line)
+
+        # --- PHẦN VẼ CÁC DÒNG ĐÃ CHIA ---
+        # Tính toán tổng chiều cao của khối văn bản để căn giữa theo chiều dọc
+        total_text_height = len(lines) * line_height
+        y_start = (SCREEN_HEIGHT - total_text_height) / 2
+
+        # Vẽ từng dòng một
+        for i, line in enumerate(lines):
+            # Tính toán vị trí để mỗi dòng được căn giữa theo chiều ngang
+            line_width = draw.textlength(line, font=font)
+            x = (SCREEN_WIDTH - line_width) / 2
+            
+            # Tính vị trí y cho dòng hiện tại
+            y = y_start + (i * line_height)
+            
+            draw.text((x, y), line, font=font, fill="white")
+
+    # Nếu có thời gian hiển thị, chương trình sẽ đợi
+    if duration_seconds > 0:
+        time.sleep(duration_seconds)
 
 # def main():
 #     while True:

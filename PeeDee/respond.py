@@ -59,11 +59,14 @@ def get_audio():
                 #         print("Please enter a valid city name")
 
                 else:
-                    clean_special_characters =convo.last.text.replace('*','')
-                    print(clean_special_characters) 
-                    ttspeak.text_to_speak(clean_special_characters)
-                    expression.blink(20)
+                    expression.display_text("Đang suy nghĩ ...")
                     time.sleep(1)
+                    clean_special_characters =convo.last.text.replace('*','')
+                    print(clean_special_characters)
+                    if text1 != GOOD_BYE:
+                   	 expression.display_text("Nghĩ ra rồi,mình sẽ trả lời ngay :))")
+                    ttspeak.text_to_speak(clean_special_characters)
+                    expression.center_eyes()
                 if text1==GOOD_BYE:
                     expression.sleep()
                     time.sleep(1)
@@ -79,7 +82,7 @@ def get_audio():
             except Exception as ex:
                 print("1")
 
-GOOGLE_API_KEY = 'AIzaSyBeZFro_HTKIHiidBVC4qQqr6XOBqUkbrg'
+GOOGLE_API_KEY ='AIzaSyCIqWjdQufHoACfgQuuIpMzIHkmMvzNlBA'
 
 genai.configure(api_key=GOOGLE_API_KEY ) 
 
@@ -109,7 +112,7 @@ satefy_settings = [
     }
 ]
 model = genai.GenerativeModel(
-    model_name="gemini-1.5-flash",
+    model_name="gemini-2.5-flash",
     generation_config=generation_config,
     # safety_settings = Adjust safety settings
     # See https://ai.google.dev/gemini-api/docs/safety-settings
